@@ -1,31 +1,5 @@
-variable "aws_region" {
-  type    = string
-  default = "eu-west-1"
-}
-
-variable "envs_to_create" {
-  type    = list(string)
-  default = ["staging"]
-}
-
-variable "app_name" {
-  type        = string
-  description = "Nom de base de l'application"
-  default     = "my-app"
-}
-
-variable "aws_region" {
-  description = "AWS region to deploy resources"
-  type        = string
-}
-
 variable "project" {
   description = "Project name"
-  type        = string
-}
-
-variable "environment" {
-  description = "Deployment environment (staging, preprod, prod)"
   type        = string
 }
 
@@ -35,28 +9,45 @@ variable "vpc_cidr" {
 }
 
 variable "public_subnets" {
-  description = "List of public subnet CIDRs"
+  description = "List of public subnets"
   type        = list(string)
 }
 
 variable "private_subnets" {
-  description = "List of private subnet CIDRs"
+  description = "List of private subnets"
   type        = list(string)
 }
 
 variable "azs" {
-  description = "List of availability zones"
+  description = "Availability zones"
   type        = list(string)
 }
 
 variable "tags" {
-  description = "Common tags to apply to resources"
+  description = "Common tags to apply"
   type        = map(string)
   default     = {}
 }
 
+variable "environment" {
+  description = "Deployment environment (dev, staging, prod)"
+  type        = string
+}
+
+variable "sg_names" {
+  description = "Names of the Security Groups to create"
+  type        = list(string)
+  default     = ["alb-sg", "ecs-sg"]
+}
+
+variable "sg_description" {
+  description = "Descriptions of the Security Groups (ASCII only)"
+  type        = list(string)
+  default     = ["Security Group for the ALB", "Security Group for ECS containers"]
+}
+
 variable "sg_ingress_public" {
-  description = "Ingress rules for public security groups (ALB)"
+  description = "Ingress rules for public Security Groups (ALB)"
   type = list(object({
     from_port   = number
     to_port     = number
@@ -66,7 +57,7 @@ variable "sg_ingress_public" {
 }
 
 variable "sg_ingress_private" {
-  description = "Ingress rules for private security groups (ECS)"
+  description = "Ingress rules for private security groups"
   type = list(object({
     from_port                = number
     to_port                  = number
@@ -76,8 +67,9 @@ variable "sg_ingress_private" {
   }))
 }
 
+
 variable "sg_egress" {
-  description = "Egress rules for all security groups"
+  description = "Common egress rules for all Security Groups"
   type = list(object({
     from_port   = number
     to_port     = number
