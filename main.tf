@@ -2,8 +2,8 @@
 module "ecr" {
   for_each = toset(var.envs_to_create)
 
-  source = "./modules/ecr-repo"
+  source = "./modules/ecr"
 
-  name = "${local.app_name}-${each.key}"
+  name = "${var.app_name}-${each.key}"
   env  = each.key
 }
