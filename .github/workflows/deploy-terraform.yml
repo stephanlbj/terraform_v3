@@ -38,7 +38,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ARN }}
-          aws-region: ${{secrets.AWS_REGION}}
+          aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: github-actions-terraform
 
       # 3️⃣ Installer Terraform
@@ -51,26 +51,30 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      # 5️⃣ Déterminer le fichier .tfvars à utiliser
-      - name: Set TFVARS
-        id: set_tfvars
+      # 5️⃣ Déterminer l'environnement et le fichier .tfvars
+      - name: Set ENV
+        id: set_env
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "ENV=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
           else
-            # Pour push automatique, on récupère le nom de la branche
             echo "ENV=${GITHUB_REF_NAME}" >> $GITHUB_ENV
           fi
           echo "Using environment: $ENV"
 
-      # 6️⃣ Plan Terraform
-      - name: Terraform Plan
-        run: terraform plan -var-file="${ENV}.tfvars" -out=tfplan
+      # 6️⃣ Sélectionner ou créer le workspace Terraform correspondant
+      - name: Select Terraform Workspace
+        run: |
+          terraform workspace select $ENV || terraform workspace new $ENV
 
-      # 7️⃣ Apply Terraform
+      # 7️⃣ Plan Terraform avec le tfvars correct
+      - name: Terraform Plan
+        run: terraform plan -var-file="envs/${ENV}/${ENV}.tfvars" -out=tfplan
+
+      # 8️⃣ Apply Terraform
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
-      # 8️⃣ Afficher les outputs
+      # 9️⃣ Afficher les outputs
       - name: Show Terraform Outputs
         run: terraform output -json
