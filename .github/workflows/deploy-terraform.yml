@@ -65,7 +65,7 @@ jobs:
       # 6️⃣ Sélectionner ou créer le workspace Terraform correspondant
       - name: Select Terraform Workspace
         run: |
-          terraform workspace select $ENV || terraform workspace new $ENV
+          terraform workspace select -or-create $ENV
 
       # 7️⃣ Plan Terraform avec le tfvars correct
       - name: Terraform Plan
