@@ -2,7 +2,7 @@
 
 Ce projet provisionne une infrastructure complète sur AWS pour une application NestJS, avec trois environnements : `staging`, `preprod` et `prod`.
 
-> ⚠️ **Important** : La branche par défaut pour tester est `staging`. Ne pas travailler sur `main` ou `preprod` directement.
+> ⚠️ **Important** : La branche par défaut pour tester est `staging`. Tout le build est dessus.  
 
 
 
