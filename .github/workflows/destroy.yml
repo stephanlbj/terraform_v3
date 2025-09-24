@@ -1,0 +1,64 @@
+name: Destroy Terraform Infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environnement à détruire"
+        required: true
+        type: choice
+        options:
+          - staging
+          - preprod
+          - prod
+
+permissions:
+  id-token: write # pour OIDC
+  contents: read # pour checkout le repo
+
+jobs:
+  terraform-destroy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      # 1️⃣ Checkout du repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Configurer AWS via OIDC
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: github-actions-terraform
+
+      # 3️⃣ Installer Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.6
+
+      # 4️⃣ Initialiser Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # 5️⃣ Définir l'environnement
+      - name: Set ENV
+        id: set_env
+        run: |
+          echo "ENV=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+          echo "Destroying environment: $ENV"
+
+      # 6️⃣ Sélectionner ou créer le workspace Terraform
+      - name: Select Terraform Workspace
+        run: terraform workspace select -or-create $ENV
+
+      # 7️⃣ Plan Terraform destroy
+      - name: Terraform Plan Destroy
+        run: terraform plan -destroy -var-file="envs/${ENV}/${ENV}.tfvars" -out=tfplan
+
+      # 8️⃣ Execute Terraform destroy
+      - name: Terraform Destroy
+        run: terraform apply -auto-approve tfplan
