@@ -45,13 +45,20 @@ Initialiser Terraform avec S3 backend et DynamoDB lock :
 
 terraform {
   backend "s3" {
-    bucket         = "<S3_BUCKET_NAME>"
-    key            = "<PATH>/terraform.tfstate"
-    region         = "<AWS_REGION>"
-    dynamodb_table = "<DYNAMODB_LOCK_TABLE>"
-    encrypt        = true
+  # bucket         = "my-terraform-states"  
+   bucket         = "my-terraform-states-api-deploy-3" 
+   key            = "infra/ecr/terraform.tfstate"   
+   region         = "eu-north-1"                  
+   # workspace_key_prefix = "env:"
+   # use_lockfile   = true
+   dynamodb_table = "terraform-locks-1"
+   encrypt        = true
+
+   
   }
 }
+
+
 
 🌐 Environnements
 
