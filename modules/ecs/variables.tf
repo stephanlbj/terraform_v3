@@ -9,11 +9,13 @@ variable "environment" {
 }
 
 variable "vpc_id" {
-  type        = string
+  type = string
+  description = "VPC ID where ECS tasks will run"
 }
 
 variable "private_subnets" {
   type        = list(string)
+  description = "Private subnets for ECS tasks"
 }
 
 variable "ecs_sg_id" {
@@ -23,10 +25,13 @@ variable "ecs_sg_id" {
 
 variable "alb_target_group_arn" {
   type        = string
+  description = "ALB target group ARN (leave empty if not using ALB)"
+  default     = ""
 }
 
 variable "container_name" {
   type        = string
+  description = "Container name for ECS task"
 }
 
 variable "container_image" {
@@ -35,8 +40,8 @@ variable "container_image" {
 }
 
 variable "container_port" {
-  type        = number
-  default     = 3000
+  type    = number
+  default = 3000
 }
 
 variable "cpu" {
