@@ -41,7 +41,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: github-actions-terraform
 
-      # 3️⃣ Installer Terraform
+      # 3️⃣ Installer  Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with:
