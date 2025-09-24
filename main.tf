@@ -44,7 +44,7 @@ module "ecs" {
   ecs_sg_id            = module.vpc.ecs_sg_id
   alb_target_group_arn = module.alb.target_group_arn
   container_name       = "nest-api"
-  container_image      = "${module.ecr.repository_url}:latest"
+  container_image = "${module.ecr[var.environment].repository_url}:latest"
   container_port       = 3000
   cpu                  = 256
   memory               = 512
